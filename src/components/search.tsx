@@ -1,6 +1,6 @@
 'use client'
 import Image from "next/image"
-import {useEffect, useState} from "react";
+import {ChangeEvent, FormEvent, useEffect, useState} from "react";
 import type {meal} from "@/types/api";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
@@ -25,21 +25,21 @@ import {
 import { AspectRatio } from "@/components/ui/aspect-ratio"
 
 type SearchProps = {
-    searchFunction: any
+    searchFunction: (query: string) => Promise<{meals: [meal]} | null>
 }
 
 const Search = ({searchFunction}: SearchProps) => {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState<{meals: [meal]} | null>(null);
 
-    const handleChange = (e: any) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setQuery(e.target.value);
     }
 
-    const handleSubmit = (e: any) => {
+    const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
 
-        searchFunction(query).then((data: any) => {
+        searchFunction(query).then((data) => {
             setResults(data);
         });
     }
@@ -51,7 +51,7 @@ const Search = ({searchFunction}: SearchProps) => {
                 <Button type="submit">Search</Button>
             </form>
             <div className="grid grid-cols-5 gap-2">
-                {results?.meals && results.meals.map((result: any) => (
+                {results?.meals && results.meals.map((result) => (
                     <Card key={result.idMeal}>
                         <CardHeader>
                             <CardTitle>
